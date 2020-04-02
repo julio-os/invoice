@@ -1,0 +1,84 @@
+<?php
+/**
+ * @var $block \Magento\Sales\Block\Adminhtml\Items\Column\Name
+ */
+/** @var \Magento\Catalog\Helper\Image $imageHelper */
+$imageHelper = $this->helper('Magento\Catalog\Helper\Image');
+/** @var \Magento\Catalog\Helper\Data $dataHelper */
+$dataHelper = $this->helper('Magento\Catalog\Helper\Data');
+?>
+
+<?php if ($_item = $block->getItem()): ?>
+    <?php
+        $parent = $_item->getBuyRequest()
+            ? $_item->getBuyRequest()->getData('parent')
+            : false;
+    ?>
+    <?php if ($parent): ?>
+        <?php $product = new \Magento\Framework\DataObject([
+            'entity_id' => $parent['id'],
+            'thumbnail' => $parent['img'],
+            'sku' => $parent['sku']
+        ]); ?>
+        <?php $thumbnail = $imageHelper->init($product, 'product_thumbnail_image')->setImageFile($product->getThumbnail())->getUrl() ?>
+        <img src="<?= $thumbnail ?>" style="float:left;"/>
+    <?php endif ?>
+    <div <?= $parent ? 'style="margin-left:80px;"' : '' ?>>
+        <div id="order_item_<?= /* @escapeNotVerified */ $_item->getId() ?>_title" class="product-title">
+            <?= $block->escapeHtml($_item->getName()) ?>
+        </div>
+
+        <?php if ($parent): ?>
+            <?php $realSku = $product->getSku(); $sku = $block->getSku(); ?>
+            <?php if ($realSku === $sku): ?>
+                <div class="product-sku-block">
+                    <span><?= /* @escapeNotVerified */ __('SKU') ?>:</span> <?= implode('<br />', $dataHelper->splitSku($block->escapeHtml($sku))) ?>
+                </div>
+            <?php else: ?>
+                <div class="product-sku-block">
+                    <span><?= /* @escapeNotVerified */ __('SKU') ?>:</span>
+                    <a href="<?php echo $block->getUrl('catalog/product/edit/id/' . $product->getId())?>" target="_blank">
+                        <?= implode('<br />', $dataHelper->splitSku($block->escapeHtml($realSku))) ?>
+                    </a>
+                </div>
+                <div class="product-sku-block" style="font-size:.8em; margin-top:0;">
+                    <span><?= /* @escapeNotVerified */ __('Variant SKU') ?>:</span>
+                    <a href="<?php echo $block->getUrl('catalog/product/edit/id/' . $_item->getProductId())?>" target="_blank">
+                        <?= implode('<br />', $dataHelper->splitSku($block->escapeHtml($sku))) ?>
+                    </a>
+                </div>
+            <?php endif ?>
+        <?php else: ?>
+            <div class="product-sku-block">
+                <span><?= /* @escapeNotVerified */ __('SKU') ?>:</span> <?= implode('<br />', $dataHelper->splitSku($block->escapeHtml($block->getSku()))) ?>
+            </div>
+        <?php endif ?>
+
+        <?php if ($block->getOrderOptions()): ?>
+            <dl class="item-options">
+                <?php foreach ($block->getOrderOptions() as $_option): ?>
+                    <dt><?= /* @escapeNotVerified */ $_option['label'] ?>:</dt>
+                    <dd>
+                        <?php if (isset($_option['custom_view']) && $_option['custom_view']): ?>
+                            <?= /* @escapeNotVerified */ $block->getCustomizedOptionValue($_option) ?>
+                        <?php else: ?>
+                            <?php $_option = $block->getFormattedOption($_option['value']); ?>
+                            <?= /* @escapeNotVerified */ $_option['value'] ?><?php if (isset($_option['remainder']) && $_option['remainder']): ?><span id="<?= /* @escapeNotVerified */ $_dots = 'dots' . uniqid() ?>"> ...</span><span id="<?= /* @escapeNotVerified */ $_id = 'id' . uniqid() ?>"><?= /* @escapeNotVerified */ $_option['remainder'] ?></span>
+                                <script>
+                                    require(['prototype'], function() {
+                                        $('<?= /* @escapeNotVerified */ $_id ?>').hide();
+                                        $('<?= /* @escapeNotVerified */ $_id ?>').up().observe('mouseover', function(){$('<?= /* @escapeNotVerified */ $_id ?>').show();});
+                                        $('<?= /* @escapeNotVerified */ $_id ?>').up().observe('mouseover', function(){$('<?= /* @escapeNotVerified */ $_dots ?>').hide();});
+                                        $('<?= /* @escapeNotVerified */ $_id ?>').up().observe('mouseout',  function(){$('<?= /* @escapeNotVerified */ $_id ?>').hide();});
+                                        $('<?= /* @escapeNotVerified */ $_id ?>').up().observe('mouseout',  function(){$('<?= /* @escapeNotVerified */ $_dots ?>').show();});
+                                    });
+                                </script>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </dd>
+                <?php endforeach; ?>
+            </dl>
+        <?php endif; ?>
+        <?= $block->escapeHtml($_item->getDescription()) ?>
+    </div>
+<?php endif; ?>

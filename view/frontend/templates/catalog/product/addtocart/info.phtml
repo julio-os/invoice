@@ -1,0 +1,11 @@
+<?php
+/**
+ * Info
+ */
+
+/* @var $block \Magento\Catalog\Block\Product\View */
+$product = $block->getProduct();
+?>
+<input type="hidden" name="parent[sku]" value="<?= $block->escapeHtml($product->getSku()) ?>" />
+<input type="hidden" name="parent[id]" value="<?= $product->getId() ?>" />
+<input type="hidden" name="parent[img]" value="<?= $product->getThumbnail() ?>" />

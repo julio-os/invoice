@@ -1,0 +1,22 @@
+{
+	"name": "julio-os/invoice"
+	,"version": "1.0.4"
+	,"description": "A custom invoicing module for julio.com (Magento 2)"
+	,"type": "magento2-module"
+	,"homepage": "https://github.com/julio-os/invoice"
+	,"license": "MIT"
+	,"authors": [
+        {
+            "email": "zbigniew.labacz@hatimeria.pl"
+            ,"name": "Zbigniew Łabacz"
+        },
+        {
+            "email": "admin@mage2.pro"
+            ,"homepage": "https://mage2.pro/users/dmitry_fedyuk"
+            ,"name": "Dmitry Fedyuk"
+            ,"role": "Developer"
+        }
+    ]
+	,"autoload": {"files": ["registration.php"], "psr-4": {"Julio\\Invoice\\": ""}}
+	,"keywords": ["Magento 2"]
+}
